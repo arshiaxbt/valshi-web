@@ -14,15 +14,33 @@ import base64
 import websockets
 from cryptography.hazmat.primitives import serialization, hashes
 from cryptography.hazmat.primitives.asymmetric import padding
-import base64
-import tempfile
 
-# Check if private key is in environment variable
+logging.basicConfig(level=logging.INFO)
+log = logging.getLogger("valshi")
+
+load_dotenv()
+
+# Get API key from environment
+KALSHI_API_KEY = os.getenv("KALSHI_API_KEY", "")
+
+# Path for private key
+KALSHI_PRIVATE_KEY_PATH = "keys/kalshi_private.pem"
+
+# Check if private key is in environment variable, write it to file
 kalshi_key_content = os.getenv("KALSHI_PRIVATE_KEY", "")
 if kalshi_key_content:
-    # Write to temporary file
+    os.makedirs("keys", exist_ok=True)
     with open(KALSHI_PRIVATE_KEY_PATH, "w") as f:
         f.write(kalshi_key_content)
+    log.info("✅ Private key loaded from environment variable")
+
+DB_PATH = "valshi.db"
+
+app = FastAPI(title="Valshi")
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+# ... rest of your code stays the same
+
 
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger("valshi")
