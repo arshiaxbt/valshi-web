@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Valshi</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <h1>🐋 Valshi</h1>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/markets">Markets</a></li>
+                <li><a href="/leaderboard">Leaderboard</a></li>
+                <li><a href="/dashboard" class="active">Dashboard</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main>
+        <section class="dashboard">
+            <h2>⚙️ Settings</h2>
+            
+            <div class="settings-card">
+                <h3>🔔 Alert Settings</h3>
+                <label>
+                    <input type="checkbox" id="alerts-toggle" checked> Enable Alerts
+                </label>
+                
+                <div class="setting-group">
+                    <label>💰 Alert Threshold</label>
+                    <select id="threshold-select">
+                        <option value="1000">$1,000</option>
+                        <option value="5000" selected>$5,000</option>
+                        <option value="10000">$10,000</option>
+                        <option value="50000">$50,000</option>
+                    </select>
+                </div>
+
+                <div class="setting-group">
+                    <label>🏷️ Market Topic</label>
+                    <select id="topic-select">
+                        <option value="all" selected>All Markets</option>
+                        <option value="macro">Macro & Politics</option>
+                        <option value="crypto">Crypto</option>
+                        <option value="sports">Sports</option>
+                    </select>
+                </div>
+
+                <div class="setting-group">
+                    <label>🌍 Timezone</label>
+                    <select id="timezone-select">
+                        <option value="UTC" selected>UTC</option>
+                        <option value="US/Eastern">EST</option>
+                        <option value="US/Pacific">PST</option>
+                        <option value="Europe/London">GMT</option>
+                    </select>
+                </div>
+
+                <button id="save-settings" class="btn-primary">Save Settings</button>
+            </div>
+
+            <div class="stats-card">
+                <h3>📈 Your Stats</h3>
+                <p>Alerts received: <span id="alerts-count">0</span></p>
+                <p>Markets tracked: <span id="markets-count">0</span></p>
+            </div>
+        </section>
+    </main>
+
+    <script src="/static/js/dashboard.js"></script>
+</body>
+</html>

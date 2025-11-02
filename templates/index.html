@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valshi - Kalshi Whale Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        :root {
+            --primary: #1DB584;
+            --primary-dark: #0d4d32;
+            --primary-light: #26d99e;
+            --bg: #f5f5f7;
+            --text: #1d1d1f;
+            --text-secondary: #86868b;
+            --border: #e5e5e7;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Header Navigation */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--white);
+            backdrop-filter: blur(20px);
+            background-color: rgba(255, 255, 255, 0.8);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+        }
+
+        nav .nav-wrapper {
+            max-width: 1440px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        nav h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+        }
+
+        nav .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            list-style: none;
+            flex: 1;
+        }
+
+        nav button {
+            background: none;
+            border: none;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            padding: 0.5rem 0;
+            position: relative;
+        }
+
+        nav button:hover,
+        nav button.active {
+            color: var(--primary);
+        }
+
+        nav button.active::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--primary);
+        }
+
+        .container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 6rem 2rem;
+            text-align: center;
+            background: linear-gradient(180deg, var(--white) 0%, rgba(29, 181, 132, 0.05) 100%);
+            margin: 0 -2rem;
+            padding-left: 2rem;
+            padding-right: 2rem;
+        }
+
+        .hero h2 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Content Sections */
+        .content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin: 2rem 0;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .section:hover {
+            border-color: var(--primary-light);
+            box-shadow: 0 20px 40px rgba(29, 181, 132, 0.1);
+        }
+
+        .section h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            letter-spacing: -0.5px;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, rgba(29, 181, 132, 0.05) 0%, rgba(13, 77, 50, 0.05) 100%);
+            padding: 2rem;
+            border-radius: 16px;
+            text-align: center;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .stat-box:hover {
+            background: linear-gradient(135deg, rgba(29, 181, 132, 0.1) 0%, rgba(13, 77, 50, 0.1) 100%);
+            border-color: var(--primary);
+            transform: translateY(-4px);
+        }
+
+        .stat-box h4 {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-box .value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            letter-spacing: -1px;
+        }
+
+        /* Trade List */
+        .list {
+            display: grid;
+            gap: 1rem;
+            max-height: 700px;
+            overflow-y: auto;
+        }
+
+        .list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .list::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .list::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+
+        .list::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        .item {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, rgba(245, 245, 247, 0.5) 100%);
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s ease;
+        }
+
+        .item:hover {
+            background: linear-gradient(135deg, rgba(29, 181, 132, 0.05) 0%, rgba(245, 245, 247, 0.8) 100%);
+            border-color: var(--primary);
+            transform: translateX(8px);
+            box-shadow: 0 10px 25px rgba(29, 181, 132, 0.1);
+        }
+
+        .item.yes {
+            border-left-color: #34c759;
+        }
+
+        .item.no {
+            border-left-color: #ff3b30;
+        }
+
+        .item.yes:hover {
+            box-shadow: 0 10px 25px rgba(52, 199, 89, 0.1);
+        }
+
+        .item.no:hover {
+            box-shadow: 0 10px 25px rgba(255, 59, 48, 0.1);
+        }
+
+        .info {
+            flex: 1;
+        }
+
+        .info h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.3px;
+        }
+
+        .info p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .amount {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-align: right;
+            letter-spacing: -0.5px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.4rem 0.9rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-right: 0.75rem;
+            letter-spacing: 0.3px;
+        }
+
+        .badge.yes {
+            background: rgba(52, 199, 89, 0.15);
+            color: #34c759;
+        }
+
+        .badge.no {
+            background: rgba(255, 59, 48, 0.15);
+            color: #ff3b30;
+        }
+
+        /* Search */
+        .search-box {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-size: 1rem;
+            background: var(--white);
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(29, 181, 132, 0.1);
+        }
+
+        .search-box button {
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .search-box button:hover {
+            background: var(--primary-light);
+            transform: scale(1.02);
+        }
+
+        .search-box button:active {
+            transform: scale(0.98);
+        }
+
+        /* Results */
+        .result {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, rgba(245, 245, 247, 0.5) 100%);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border);
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            transition: all 0.3s ease;
+        }
+
+        .result:hover {
+            background: linear-gradient(135deg, rgba(29, 181, 132, 0.05) 0%, rgba(245, 245, 247, 0.8) 100%);
+            border-color: var(--primary);
+            transform: translateX(8px);
+            box-shadow: 0 10px 25px rgba(29, 181, 132, 0.1);
+        }
+
+        .result h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+            letter-spacing: -0.3px;
+        }
+
+        .result p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Leaderboard */
+        .leader-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, rgba(245, 245, 247, 0.5) 100%);
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border);
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .leader-item:hover {
+            background: linear-gradient(135deg, rgba(29, 181, 132, 0.05) 0%, rgba(245, 245, 247, 0.8) 100%);
+            transform: translateX(8px);
+        }
+
+        .rank {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--primary);
+            min-width: 60px;
+        }
+
+        .leader-item strong {
+            flex: 1;
+            font-size: 1.05rem;
+            letter-spacing: -0.3px;
+        }
+
+        .leader-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-align: right;
+        }
+
+        /* Buttons Row */
+        .buttons-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 1rem;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            letter-spacing: 0.3px;
+        }
+
+        .btn:hover {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(29, 181, 132, 0.2);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-state p {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav .nav-wrapper {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: center;
+            }
+
+            nav .nav-links {
+                justify-content: center;
+            }
+
+            .hero h2 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .section {
+                padding: 1.5rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .amount {
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-wrapper">
+            <h1>🐋 Valshi</h1>
+            <ul class="nav-links">
+                <button class="nav-btn active" onclick="switchTab('recent')">Recent Trades</button>
+                <button class="nav-btn" onclick="switchTab('top')">Top 24h</button>
+                <button class="nav-btn" onclick="switchTab('search')">Search</button>
+                <button class="nav-btn" onclick="switchTab('leaderboard')">Leaderboard</button>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- RECENT TRADES -->
+        <div id="recent" class="content active">
+            <div class="hero">
+                <h2>Track Whale Trades</h2>
+                <p>Monitor large prediction market positions in real-time</p>
+            </div>
+
+            <div class="section">
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <h4>📊 24h Volume</h4>
+                        <div class="value" id="vol">$0</div>
+                    </div>
+                    <div class="stat-box">
+                        <h4>⚡ Total Trades</h4>
+                        <div class="value" id="cnt">0</div>
+                    </div>
+                    <div class="stat-box">
+                        <h4>📈 Markets</h4>
+                        <div class="value" id="mkts">0</div>
+                    </div>
+                </div>
+
+                <h2 style="margin-top: 2.5rem; margin-bottom: 1.5rem;">Recent Whale Trades</h2>
+                <div class="list" id="recent-list">
+                    <div class="empty-state">
+                        <p>⏳ Waiting for whale trades...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TOP TRADES 24H -->
+        <div id="top" class="content">
+            <div class="section">
+                <h2>Top Trades (24h)</h2>
+                <div class="list" id="top-list">
+                    <div class="empty-state">
+                        <p>Loading...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SEARCH MARKETS -->
+        <div id="search" class="content">
+            <div class="section">
+                <h2>Search Kalshi Markets</h2>
+                <div class="search-box">
+                    <input type="text" id="search-input" placeholder="Search markets..." />
+                    <button onclick="searchMarkets()">Search</button>
+                </div>
+                <div id="search-results"></div>
+            </div>
+        </div>
+
+        <!-- LEADERBOARD -->
+        <div id="leaderboard" class="content">
+            <div class="section">
+                <h2>Leaderboard</h2>
+                <div class="buttons-row">
+                    <button class="btn" onclick="loadLeaderboard('volume')">💵 By Volume</button>
+                    <button class="btn" onclick="loadLeaderboard('num_markets_traded')">📊 By Markets</button>
+                    <button class="btn" onclick="loadLeaderboard('num_markets_traded', 7)">📈 Last 7 Days</button>
+                </div>
+                <div id="leaderboard-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tab) {
+            document.querySelectorAll(".content").forEach(el => el.classList.remove("active"));
+            document.querySelectorAll(".nav-btn").forEach(el => el.classList.remove("active"));
+            document.getElementById(tab).classList.add("active");
+            event.target.classList.add("active");
+            
+            if (tab === "top") loadTop();
+            if (tab === "leaderboard") loadLeaderboard('volume');
+        }
+
+        async function loadStats() {
+            try {
+                const res = await fetch("/api/stats");
+                const data = await res.json();
+                const vol = data.total_volume > 1000000 ? "$" + (data.total_volume / 1000000).toFixed(1) + "M" : "$" + (data.total_volume / 1000).toFixed(0) + "K";
+                document.getElementById("vol").textContent = vol;
+                document.getElementById("cnt").textContent = data.trade_count;
+                document.getElementById("mkts").textContent = data.unique_markets;
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        async function loadRecent() {
+            try {
+                const res = await fetch("/api/recent-trades?limit=20");
+                const data = await res.json();
+                const list = document.getElementById("recent-list");
+                if (!data.trades || !data.trades.length) {
+                    list.innerHTML = '<div class="empty-state"><p>No trades yet</p></div>';
+                    return;
+                }
+                list.innerHTML = data.trades.map(t => `
+                    <a class="item ${t.side}" href="https://kalshi.com/?search=${t.ticker}" target="_blank">
+                        <div class="info">
+                            <h4><span class="badge ${t.side}">${t.side === "yes" ? "YES" : "NO"}</span> ${t.title}</h4>
+                            <p>${new Date(t.timestamp).toLocaleString()}</p>
+                        </div>
+                        <div class="amount">$${Math.round(t.notional).toLocaleString()}</div>
+                    </a>
+                `).join("");
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        async function loadTop() {
+            try {
+                const res = await fetch("/api/top-trades");
+                const data = await res.json();
+                const list = document.getElementById("top-list");
+                if (!data.trades || !data.trades.length) {
+                    list.innerHTML = '<div class="empty-state"><p>No trades</p></div>';
+                    return;
+                }
+                list.innerHTML = data.trades.map(t => `
+                    <a class="item ${t.side}" href="https://kalshi.com/?search=${t.ticker}" target="_blank">
+                        <div class="info">
+                            <h4><span class="badge ${t.side}">${t.side === "yes" ? "YES" : "NO"}</span> ${t.title}</h4>
+                        </div>
+                        <div class="amount">$${Math.round(t.notional).toLocaleString()}</div>
+                    </a>
+                `).join("");
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        async function searchMarkets() {
+            const q = document.getElementById("search-input").value;
+            if (!q || q.length < 2) { alert("Enter at least 2 characters"); return; }
+            const results = document.getElementById("search-results");
+            results.innerHTML = '<div class="empty-state"><p>🔍 Searching...</p></div>';
+            try {
+                const res = await fetch(`/api/search-markets?q=${encodeURIComponent(q)}`);
+                const data = await res.json();
+                if (!data.markets || !data.markets.length) {
+                    results.innerHTML = '<div class="empty-state"><p>No markets found</p></div>';
+                    return;
+                }
+                results.innerHTML = data.markets.map(m => `
+                    <a class="result" href="https://kalshi.com/?search=${m.ticker}" target="_blank">
+                        <h4>${m.ticker}</h4>
+                        <p>${m.title}</p>
+                        <p style="margin-top:0.75rem; font-size: 0.9rem;"><strong>Yes Price:</strong> $${m.yes_price.toFixed(2)} | <strong>Volume:</strong> ${m.volume.toLocaleString()}</p>
+                    </a>
+                `).join("");
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        async function loadLeaderboard(metric, days = 0) {
+            try {
+                const res = await fetch(`/api/leaderboard?metric=${metric}&timeframe=${days}`);
+                const data = await res.json();
+                const list = document.getElementById("leaderboard-list");
+                if (!data.leaderboard || !data.leaderboard.length) {
+                    list.innerHTML = '<div class="empty-state"><p>No data</p></div>';
+                    return;
+                }
+                list.innerHTML = data.leaderboard.map(item => `
+                    <div class="leader-item">
+                        <span class="rank">#${item.rank}</span>
+                        <strong>${item.nickname}</strong>
+                        <div class="leader-value">${metric === 'volume' ? '$' + (item.value / 1000000).toFixed(1) + 'M' : item.value}</div>
+                    </div>
+                `).join("");
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        window.addEventListener("load", () => {
+            loadStats();
+            loadRecent();
+            setInterval(loadStats, 10000);
+            setInterval(loadRecent, 15000);
+        });
+    </script>
+</body>
+</html>
