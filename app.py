@@ -14,6 +14,15 @@ import base64
 import websockets
 from cryptography.hazmat.primitives import serialization, hashes
 from cryptography.hazmat.primitives.asymmetric import padding
+import base64
+import tempfile
+
+# Check if private key is in environment variable
+kalshi_key_content = os.getenv("KALSHI_PRIVATE_KEY", "")
+if kalshi_key_content:
+    # Write to temporary file
+    with open(KALSHI_PRIVATE_KEY_PATH, "w") as f:
+        f.write(kalshi_key_content)
 
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger("valshi")
